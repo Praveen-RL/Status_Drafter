@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Drafter Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <span class="icon">📝</span>
+                <h1>Status Drafter</h1>
+            </div>
+            <p class="subtitle">Draft professional daily & weekly updates in seconds.</p>
+
+            <!-- Navigation -->
+            <div class="nav-container">
+                <button class="nav-btn active" data-view="editor">Editor</button>
+                <button class="nav-btn" data-view="dashboard">Dashboard</button>
+                <button class="nav-btn" data-view="settings">Settings</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Editor View -->
+            <div id="editorSection" class="status-drafter">
+                <!-- Config Section -->
+                <section class="card config-section">
+                    <div class="toggle-container">
+                        <button class="toggle-btn active" data-mode="daily">Daily Stand-up</button>
+                        <button class="toggle-btn" data-mode="weekly">Weekly Summary</button>
+                    </div>
+                </section>
+
+                <div class="editor-layout">
+                    <!-- Input Module -->
+                    <section class="card input-section">
+                        <h2>Update Details</h2>
+                        <form id="statusForm">
+                            <div class="form-group">
+                                <label for="userName">Name / Role <span class="optional">(Optional)</span></label>
+                                <input type="text" id="userName" placeholder="e.g. John Doe, Frontend Dev">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dateRange">Date / Range</label>
+                                <input type="text" id="dateRange" placeholder="Today">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="projectSelect">Project</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <select id="projectSelect">
+                                        <option value="">Select Project...</option>
+                                    </select>
+                                    <select id="roleSelect" disabled>
+                                        <option value="">Select Role...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taskTitle">Key Highlight / Task Title</label>
+                                <input type="text" id="taskTitle" placeholder="e.g. Implemented Login Flow">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="progressStatus">Status</label>
+                                <select id="progressStatus">
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Blocked">Blocked</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taskDesc">Description / What was done?</label>
+                                <textarea id="taskDesc" rows="3"
+                                    placeholder="Brief details about the task..."></textarea>
+                            </div>
+
+                            <div class="form-group" id="blockerGroup" style="display: none;">
+                                <label for="blockers">Blockers / Issues</label>
+                                <textarea id="blockers" rows="2" placeholder="What is blocking you?"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="nextSteps">Next Steps</label>
+                                <textarea id="nextSteps" rows="2" placeholder="What will you work on next?"></textarea>
+                            </div>
+
+                            <div class="actions">
+                                <button type="button" id="saveBtn" class="primary-btn">💾 Save Draft</button>
+                                <button type="button" id="enhanceBtn" class="secondary-btn">✨ AI Enhance</button>
+                                <button type="reset" class="outline-btn">Clear</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Preview Module -->
+                    <section class="card preview-section">
+                        <div class="preview-header">
+                            <h2>Preview</h2>
+                            <div class="preview-actions">
+                                <span id="copyFeedback" class="feedback-msg"></span>
+                            </div>
+                        </div>
+                        <div class="editor-container">
+                            <textarea id="outputPreview" readonly
+                                placeholder="Your status draft will appear here..."></textarea>
+                        </div>
+
+                        <div class="output-actions">
+                            <button id="copyBtn" class="primary-btn">Copy to Clipboard</button>
+                            <button id="emailBtn" class="icon-btn" title="Send via Email">📧</button>
+                            <button id="slackBtn" class="icon-btn" title="Format for Slack">💬</button>
+                        </div>
+
+                        <!-- History Sidebar (Collapsible or Bottom for now to keep layout simple) -->
+                        <div class="history-section"
+                            style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                            <h3>Latest History</h3>
+                            <div id="historyList" class="history-list">
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">No history yet...</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboardSection" class="dashboard-container hidden">
+                <div class="dashboard-controls" style="flex-wrap: wrap;">
+                    <input type="text" id="searchInput" placeholder="Search..." style="flex: 1; min-width: 200px;">
+
+                    <select id="filterProject">
+                        <option value="all">All Projects</option>
+                    </select>
+
+                    <select id="filterType">
+                        <option value="all">All Types</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
+
+                    <!-- Time Filters -->
+                    <select id="filterTimeframe">
+                        <option value="all">All Time</option>
+                        <option value="this_week">This Week</option>
+                        <option value="last_week">Last Week</option>
+                        <option value="custom">Specific Date</option>
+                    </select>
+
+                    <input type="date" id="filterDate" class="hidden"
+                        style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color:white;">
+
+                    <select id="sortOrder">
+                        <option value="desc">Newest</option>
+                        <option value="asc">Oldest</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Summary / Title</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsSection" class="settings-container hidden">
+                <div class="editor-layout">
+                    <!-- Projects Manager -->
+                    <section class="card">
+                        <h2>Projects</h2>
+                        <div class="form-group" style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="newProjectName" placeholder="New Project Name" style="flex:1;">
+                            <button id="addProjectBtn" class="primary-btn small-btn">+</button>
+                        </div>
+                        <ul id="projectsList" class="settings-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </section>
+
+                    <!-- Roles Manager -->
+                    <section class="card">
+                        <h2>Roles</h2>
+                        <p class="subtitle" style="margin-bottom: 1rem;">Select a project to manage roles</p>
+                        <div class="form-group" style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="newRoleName" placeholder="New Role Name" style="flex:1;" disabled>
+                            <button id="addRoleBtn" class="primary-btn small-btn" disabled>+</button>
+                        </div>
+                        <ul id="rolesList" class="settings-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Status Drafter Tool &copy; 2026</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">Copied to clipboard!</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

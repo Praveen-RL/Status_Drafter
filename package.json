@@ -1,0 +1,21 @@
+{
+  "name": "status-drafter",
+  "version": "1.0.0",
+  "description": "Daily and Weekly Status Drafter with SQLite persistence",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.4",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.4",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  }
+}
